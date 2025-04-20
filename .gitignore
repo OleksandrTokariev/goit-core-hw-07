@@ -1,1 +1,5 @@
 /.venv/
+.idea/
+.gitignore
+*.txt
+Auto_Tech_Checks/
