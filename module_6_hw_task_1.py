@@ -1,6 +1,6 @@
 from collections import UserDict
 
-class UncorrectPhone(Exception):
+class UncorrectPhone(ValueError):
     pass
 
 class Field:
@@ -16,10 +16,10 @@ class Name(Field):
 
 class Phone(Field):
     def __init__(self, phone):
-        if len(phone) == 10:
+        if (len(phone) == 10) and (phone.isdigit()):
             super().__init__(phone)
         else:
-            raise UncorrectPhone(f"Phone number contain more or less than 10 digits")
+            raise UncorrectPhone(f"Phone number contain more or less than 10 digits only")
 
 class Record:
     def __init__(self, name):
@@ -30,11 +30,12 @@ class Record:
         self.phones.append(Phone(phone))
 
     def edit_phone(self, old_phone: str, new_phone: str) -> None:
-        for i, phone_obj in enumerate(self.phones):
-            if phone_obj.value == old_phone:
-                self.phones[i] = Phone(new_phone)
-                return
-        raise ValueError(f"Номер телефону '{old_phone}' не знайдено")
+        phone_obj = self.find_phone(old_phone)
+        if phone_obj:
+            self.remove_phone(old_phone)
+            self.add_phone(new_phone)
+        else:
+            raise ValueError(f"Номер телефону '{old_phone}' не знайдено")
 
     def find_phone(self, search_phone: str) -> Phone | None:
         for phone_obj in self.phones:
@@ -43,15 +44,15 @@ class Record:
         return None
 
     def remove_phone(self, deleted_phone: str):
-        self.phones = [phone_obj for phone_obj in self.phones if phone_obj.value != deleted_phone]
-
+        phone_obj = self.find_phone(deleted_phone)
+        if phone_obj:
+            self.phones.remove(phone_obj)
+        else:
+            raise ValueError(f"Номер телефону '{deleted_phone}' не знайдено")
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
 class AddressBook(UserDict):
-    def __init__(self):
-        super().__init__()
-        self.data = dict()
 
     def add_record(self, new_record: Record):
         self.data[new_record.name.value] = new_record  # ключ - ім"я (Record)
