@@ -99,7 +99,8 @@ class AddressBook(UserDict):
 
         for record in self.data.values():
             if record.birthday:
-                birthday_this_year = record.birthday.value.replace(year=today.year)
+                birthday_date_obj = datetime.strptime(record.birthday.value, "%d.%m.%Y").date()
+                birthday_this_year = birthday_date_obj.replace(year=today.year)
                 if birthday_this_year < today:
                     birthday_this_year = birthday_this_year.replace(year=today.year + 1)
 
@@ -107,7 +108,7 @@ class AddressBook(UserDict):
                     birthday_this_year = AddressBook.__adjust_for_weekend(birthday_this_year)
                     congratulation_date_str = AddressBook.__date_to_string(birthday_this_year)
                     upcoming_birthdays.append({"name": record.name.value,
-                                               "birthday": AddressBook.__date_to_string(record.birthday.value),
+                                               "birthday": AddressBook.__date_to_string(birthday_date_obj),
                                                "congratulation_date": congratulation_date_str})
         return upcoming_birthdays
 
