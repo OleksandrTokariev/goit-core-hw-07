@@ -63,6 +63,9 @@ class Record:
         else:
             raise ValueError(f"Номер телефону '{deleted_phone}' не знайдено")
     def __str__(self):
+        if self.birthday:
+            return (f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, "
+                    f"birthday: {self.birthday.value}")
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
 class AddressBook(UserDict):
