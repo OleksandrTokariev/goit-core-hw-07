@@ -152,8 +152,6 @@ def change_contact(args, address_book: AddressBook):
     record = address_book.find(name)
     if record:
         record.edit_phone(old_phone, new_phone)
-        address_book.delete(name)
-        address_book.add_record(record)
     return "Contact changed."
 
 @input_error
@@ -161,7 +159,7 @@ def show_phone_number(args, address_book: AddressBook):
     name, *_ = args
     record = address_book.find(name)
     if record:
-        return print(record)
+        return record
 
 @input_error
 def add_birthday(args, address_book: AddressBook):
@@ -169,8 +167,6 @@ def add_birthday(args, address_book: AddressBook):
     record = address_book.find(name)
     if record:
         record.add_birthday(birth_date)
-        address_book.delete(name)
-        address_book.add_record(record)
     return "Birthday added."
 
 @input_error
@@ -192,7 +188,12 @@ def main():
     test_book = AddressBook()
     print("Welcome to the assistant bot!")
     while True:
-        user_input = input("Enter a command: ")
+        user_input = input("Enter a command: ").strip()
+
+        if not user_input:
+            print("Please enter a command.")
+            continue
+
         command, *args = parse_input(user_input)
 
         if command in ["close", "exit"]:
